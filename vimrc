@@ -78,15 +78,23 @@ Plug 'jmcantrell/vim-virtualenv'
 Plug 'mhinz/vim-startify'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
 Plug 'racer-rust/vim-racer'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'vimwiki/vimwiki', { 'branch': 'dev' }
 Plug 'itchyny/calendar.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 call plug#end()
 
 colorscheme gruvbox
+" ultisnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-f>"
+let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 
 " clang_complete
 let s:clang_library_path='/Library/Developer/CommandLineTools/usr/lib'
