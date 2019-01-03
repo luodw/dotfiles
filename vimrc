@@ -32,6 +32,7 @@ autocmd FileType ruby setlocal shiftwidth=2 tabstop=2
 autocmd FileType go setlocal shiftwidth=4 tabstop=4
 autocmd FileType yaml setlocal shiftwidth=2 tabstop=2
 autocmd FileType sh  setlocal shiftwidth=4 tabstop=4
+au BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn}   set filetype=mkd
 
 " when open file, go to last cur
 augroup resCur
@@ -60,7 +61,7 @@ Plug 'ervandew/supertab'
 Plug 'scrooloose/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'kien/ctrlp.vim'
+" Plug 'kien/ctrlp.vim'
 Plug 'davidhalter/jedi-vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-fugitive'
@@ -88,9 +89,37 @@ Plug 'itchyny/calendar.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'terryma/vim-multiple-cursors'
 call plug#end()
 
 colorscheme gruvbox
+
+" Clear last search highlighting
+nnoremap <Space> :noh<CR><ESC>
+
+" multi-cursors
+let g:multi_cursor_use_default_mapping=0
+
+" Default mapping
+let g:multi_cursor_start_word_key      = '<C-n>'
+let g:multi_cursor_select_all_word_key = '<A-n>'
+let g:multi_cursor_start_key           = 'g<C-n>'
+let g:multi_cursor_select_all_key      = 'g<A-n>'
+let g:multi_cursor_next_key            = '<C-n>'
+let g:multi_cursor_prev_key            = '<C-p>'
+let g:multi_cursor_skip_key            = '<C-x>'
+let g:multi_cursor_quit_key            = '<Esc>'
+
+" easymotion
+let g:EasyMotion_smartcase = 1
+"let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
+map <Leader><leader>h <Plug>(easymotion-linebackward)
+map <Leader><Leader>j <Plug>(easymotion-j)
+map <Leader><Leader>k <Plug>(easymotion-k)
+map <Leader><leader>l <Plug>(easymotion-lineforward)
+" 重复上一次操作, 类似repeat插件, 很强大
+map <Leader><leader>. <Plug>(easymotion-repeat)
+
 " ultisnips
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-f>"
@@ -121,11 +150,10 @@ let g:ale_fixers = {
 let g:SuperTabDefaultCompletionType = "context"
 
 " vimwiki
-let g:vimwiki_list = [ {"path": "~/vimwiki/", "path_html": "~/vimwiki_html/", "syntax": "markdown", "ext": ".md", "auto_export": 0}]
+let g:vimwiki_list = [ {"path": "~/vimwiki/", "path_html": "~/vimwiki_html/", "auto_export": 0}]
 
 " airline setting
 set encoding=utf-8
-"let g:airline_theme='default'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1  
 let g:airline#extensions#virtualenv#enabled = 1
@@ -145,13 +173,15 @@ let g:go_info_mode = 'gocode'
 let g:ackprg = 'ag --nogroup --nocolor --column'
 
 " ctrlp setting
-let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+"let g:ctrlp_working_path_mode = 'ra'
+"let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 
-" fzf
-nnoremap <silent> <Leader>f :Files<CR>
-nnoremap <silent> <Leader>b :Buffers<CR>
-nnoremap <silent> <Leader>g :Rg<Cr>
+" fzf 
+let g:fzf_layout = { 'down': '~40%' }
+let g:fzf_action = { 'ctrl-e': 'edit' }
+nnoremap <silent> <C-p> :Files<CR>
+nnoremap <silent> <C-e> :Buffers<CR>
+nnoremap <silent> <C-g> :Rg<CR>
 " let g:gitgutter_highlight_lines = 1
 
 
