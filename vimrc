@@ -12,7 +12,7 @@ set tabstop=4
 set softtabstop=4
 set shiftwidth=4
 set autoindent
-set completeopt-=preview
+set completeopt=menu,menuone,noselect,noinsert
 set cursorline  
 set cursorcolumn  
 set wildmenu
@@ -20,7 +20,7 @@ set hid
 set showmatch
 set scrolloff=10
 set mouse=a
-set omnifunc=syntaxcomplaate#Complete
+set omnifunc=syntaxcomplete#Complete
 
 " tablength exceptions
 autocmd FileType html setlocal shiftwidth=2 tabstop=2
@@ -32,7 +32,12 @@ autocmd FileType ruby setlocal shiftwidth=2 tabstop=2
 autocmd FileType go setlocal shiftwidth=4 tabstop=4
 autocmd FileType yaml setlocal shiftwidth=2 tabstop=2
 autocmd FileType sh  setlocal shiftwidth=4 tabstop=4
-au BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn}   set filetype=mkd
+autocmd FileType python  setlocal shiftwidth=2 tabstop=2
+
+au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap gs <Plug>(rust-def-split)
+au FileType rust nmap gx <Plug>(rust-def-vertical)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
 
 " when open file, go to last cur
 augroup resCur
@@ -47,8 +52,9 @@ filetype plugin indent on
 syntax enable
 
 let mapleader = ";"
-nnoremap <Leader>b :ls<CR>:b<Space>
-nnoremap <Leader><Leader> :bnext<CR>
+
+" setting before load ale
+let g:ale_completion_enabled = 1
 
 " Specify a directory for plugins
 call plug#begin('~/.vim/plugged')
@@ -56,9 +62,11 @@ call plug#begin('~/.vim/plugged')
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'mdempsky/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 Plug 'morhetz/gruvbox'
+Plug 'jnurmine/Zenburn'
 Plug 'majutsushi/tagbar'
 Plug 'ervandew/supertab'
 Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 " Plug 'kien/ctrlp.vim'
@@ -72,6 +80,8 @@ Plug 'plasticboy/vim-markdown'
 Plug 'suan/vim-instant-markdown'
 Plug 'mileszs/ack.vim'
 Plug 'Rip-Rip/clang_complete'
+Plug 'kchmck/vim-coffee-script'
+Plug 'leafgarland/typescript-vim'
 Plug 'pangloss/vim-javascript'
 Plug 'ternjs/tern_for_vim'
 Plug 'moll/vim-node'
@@ -81,21 +91,44 @@ Plug 'skywind3000/asyncrun.vim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'racer-rust/vim-racer'
+Plug 'rust-lang/rust.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'kristijanhusak/vim-carbon-now-sh'
-Plug 'vimwiki/vimwiki', { 'branch': 'dev' }
+"Plug 'vimwiki/vimwiki', { 'branch': 'dev' }
 Plug 'itchyny/calendar.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'terryma/vim-multiple-cursors'
+Plug 'ryanoasis/vim-devicons'
+Plug 'jiangmiao/auto-pairs'
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 call plug#end()
 
 colorscheme gruvbox
-
+" colorscheme zenburn
 " Clear last search highlighting
 nnoremap <Space> :noh<CR><ESC>
+nnoremap <Leader><Leader> :bnext<CR>
+
+" gf: go to module
+nnoremap <Leader>d :TernDef<CR>
+nnoremap <Leader>r :TernRefs<CR>
+
+" nerdtree git status
+let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ 'Ignored'   : '☒',
+    \ "Unknown"   : "?"
+    \ }
 
 " multi-cursors
 let g:multi_cursor_use_default_mapping=0
@@ -136,21 +169,30 @@ let g:clang_complete_copen = 1
 let g:clang_snippets = 1
 let g:clang_snippets_engine = 'clang_complete'
 
+let g:jedi#completions_enabled = 1
 let g:jedi#force_py_version=3
 let g:jedi#show_call_signatures = "2"
 " ale setting
+
 let g:ale_python_flake8_options='--max-line-length 120'
+let g:ale_linters = {
+\   'python': ['flake8', 'mypy', 'pylint'],
+\   'javascript': ['eslint'],
+\   'go': ['gofmt', 'golint', 'go vet'],
+\   'rust': ['cargo', 'rustc'],
+\}
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'javascript': ['eslint'],
+\   'javascript': ['prettier', 'eslint'],
+\   'rust': ['rustfmt']
 \}
-
+let g:ale_rust_cargo_use_check = 1
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 " supertab setting
 let g:SuperTabDefaultCompletionType = "context"
-
-" vimwiki
-let g:vimwiki_list = [ {"path": "~/vimwiki/", "path_html": "~/vimwiki_html/", "auto_export": 0}]
 
 " airline setting
 set encoding=utf-8
@@ -163,10 +205,10 @@ let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_folding_disabled=1
 let g:instant_markdown_autostart = 0
 let g:instant_markdown_slow = 1
-
+map <leader>md :InstantMarkdownPreview<CR>
 " vim-go setting
 let g:go_fmt_command = "goimports"
-let g:go_auto_type_info = 1
+"let g:go_auto_type_info = 1
 let g:go_info_mode = 'gocode'
 
 " ag and ack
@@ -175,7 +217,6 @@ let g:ackprg = 'ag --nogroup --nocolor --column'
 " ctrlp setting
 "let g:ctrlp_working_path_mode = 'ra'
 "let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-
 " fzf 
 let g:fzf_layout = { 'down': '~40%' }
 let g:fzf_action = { 'ctrl-e': 'edit' }
@@ -184,7 +225,8 @@ nnoremap <silent> <C-e> :Buffers<CR>
 nnoremap <silent> <C-g> :Rg<CR>
 " let g:gitgutter_highlight_lines = 1
 
-
+let g:racer_cmd = "/usr/local/bin/racer"
+let g:racer_experimental_completer = 1
 " Carbon setting
 vnoremap <leader>c :CarbonNowSh<CR>
 
